@@ -35,6 +35,7 @@ object TwitterExample extends App {
       map(_.toLowerCase).
       filter(_.matches("[a-z]+")).toList
 
+  // Let's remove stop words (`the`, `a`, `it`, etc.)
   def pass(words: List[String]): List[String] =
     words.filter(!stopWords.contains(_))
 
