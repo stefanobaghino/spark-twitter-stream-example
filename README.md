@@ -9,4 +9,4 @@ To make it work on your machine, be sure to add a `twitter4j.properties` under `
     oauth.accessToken=***
     oauth.accessTokenSecret=***
 
-Visit https://apps.twitter.com to get your own API keys.
+Visit [apps.twitter.com](https://apps.twitter.com) to get your own API keys.
