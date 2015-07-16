@@ -52,7 +52,7 @@ object TwitterExample extends App {
         score + rate(word)
     }
 
-  // HERE'S THE CICCIA!
+  // Here's the actual processing, using the functions we defined above
   twitterStream.
     map { tweet => (tweet.getId(), tweet.getText()) }.
     map { case (id, text) => (id, clean(text)) }.
