@@ -4,7 +4,7 @@ import org.apache.spark.streaming.twitter.TwitterUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.{SparkConf, SparkContext}
 
-import scala.io.Source
+import scala.io.{AnsiColor, Source}
 
 object TwitterExample extends App {
 
@@ -30,34 +30,45 @@ object TwitterExample extends App {
   val negativeWords = Source.fromFile("src/main/resources/neg-words.dat").getLines().toList
 
   // Get the text of a tweet and produce a list of "actual words"
-  def clean(tweetText: String): List[String] =
+  def real(tweetText: String): List[String] =
     tweetText.split(" ").
       map(_.toLowerCase).
       filter(_.matches("[a-z]+")).toList
 
   // Let's remove stop words (`the`, `a`, `it`, etc.)
-  def pass(words: List[String]): List[String] =
+  def clean(words: List[String]): List[String] =
     words.filter(!stopWords.contains(_))
 
-  // Rating a single word, if it appears on any of the interesting lists we loaded
-  def rate(word: String): Int =
+  // Rating of a single word, if it appears on any of the interesting lists we loaded
+  def score(word: String): Int =
     if (positiveWords.contains(word))       1
     else if (negativeWords.contains(word)) -1
     else                                    0
 
-  // Rating a list of words, summing up individual ratings
-  def rate(words: List[String]): Int =
+  // Rating of a list of words, summing up individual ratings
+  def score(words: List[String]): Int =
     words.foldRight(0) {
-      (word, score) =>
-        score + rate(word)
+      (word, rating) =>
+        rating + score(word)
     }
+
+  // Just a couple of helpers to make the text a little bit more readable
+  def readable(n: Int): String =
+    if (n > 0)      s"[${AnsiColor.GREEN + n + AnsiColor.RESET}] \t"
+    else if (n < 0) s"[${AnsiColor.RED   + n + AnsiColor.RESET}] \t"
+    else            s"[$n] \t"
+
+  def readable(s: String): String =
+    s.takeWhile(_ != '\n').take(80) + "..."
 
   // Here's the actual processing, using the functions we defined above
   twitterStream.
-    map { tweet => (tweet.getId(), tweet.getText()) }.
-    map { case (id, text) => (id, clean(text)) }.
-    map { case (id, words) => (id, pass(words)) }.
-    map { case (id, words) => (id, rate(words)) }.
+    map    { tweet =>               tweet.getText }.
+    map    { tweet =>               (real(tweet), tweet)  }.
+    map    { case (words, tweet) => (clean(words), tweet) }.
+    map    { case (words, tweet) => (score(words), tweet) }.
+    filter { case (score, tweet) => score != 0 }.
+    map    { case (score, tweet) => s"${readable(score)}${readable(tweet)}" }.
     print()
 
   // Start the streaming
