@@ -11,9 +11,12 @@ To make it work on your machine, be sure to add a `twitter4j.properties` under `
 
 Visit [apps.twitter.com](https://apps.twitter.com) to get your own API keys.
 
-To submit the job to an existing Spark installation you can run the following
+To submit the job to an existing Spark installation you can package the job with the following command
 
     sbt assembly
+
+and then submit it
+
     $SPARK_HOME/bin/spark-submit \
       --class me.baghino.spark.intro.TwitterExample \
       --master $SPARK_MASTER \
