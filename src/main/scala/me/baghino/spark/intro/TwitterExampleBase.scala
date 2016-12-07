@@ -32,9 +32,9 @@ trait TwitterExampleBase {
     TwitterUtils.createStream(streamingContext, None)
 
   // FIXME There's a smarter way to do this: see the "broadcast-var" branch
-  val uselessWords = Source.fromFile("src/main/resources/stop-words.dat").getLines().toList
-  val positiveWords = Source.fromFile("src/main/resources/pos-words.dat").getLines().toList
-  val negativeWords = Source.fromFile("src/main/resources/neg-words.dat").getLines().toList
+  val uselessWords = load("/stop-words.dat")
+  val positiveWords = load("/pos-words.dat")
+  val negativeWords = load("/neg-words.dat")
   
   def wordsOf(tweet: TweetText): Sentence =
     tweet.split(" ")
