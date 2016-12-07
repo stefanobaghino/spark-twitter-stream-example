@@ -1,6 +1,6 @@
 package me.baghino.spark
 
-import scala.io.AnsiColor
+import scala.io.{AnsiColor, Source}
 
 package object intro {
 
@@ -20,5 +20,12 @@ package object intro {
     sn match {
       case (tweetText, score) => s"${wrapScore(makeReadable(score))}${makeReadable(tweetText)}"
     }
+
+  def load(resourcePath: String): List[String] = {
+    val source = Source.fromInputStream(getClass.getResourceAsStream(resourcePath))
+    val words = source.getLines.toList
+    source.close()
+    words
+  }
 
 }
