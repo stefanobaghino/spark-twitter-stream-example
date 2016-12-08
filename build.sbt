@@ -16,6 +16,6 @@ assemblyMergeStrategy in assembly := {
   case PathList("org", "apache", "commons", xs @ _*)              => MergeStrategy.first
   case PathList("org", "slf4j", xs @ _*)                          => MergeStrategy.first
   case PathList(ps @ _*) if ps.last endsWith "plugin.properties"  => MergeStrategy.first
-  case PathList("META-INF", xs @ _*)                              => MergeStrategy.first
+  case PathList("META-INF", xs @ _*)                              => MergeStrategy.discard
   case x                                                          => (assemblyMergeStrategy in assembly).value.apply(x)
 }
